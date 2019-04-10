@@ -9,8 +9,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="105dp"
-        tools:layout_editor_absoluteY="0dp">
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -18,7 +19,7 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/address"
+                android:id="@+id/IPaddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -40,21 +41,14 @@
                 android:layout_marginTop="25dp"
                 android:hint="Enter Password" />
 
-            <EditText
-                android:id="@+id/server_pth"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="25dp"
-                android:hint="Enter Complete Server Folder Address" />
 
             <EditText
-                android:id="@+id/dest"
+                android:id="@+id/size"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="25dp"
-                android:hint="Enter Desitantion Path \n e.g /storage/emulated/0/Pictures/test.png" />
+                android:hint="Enter file size" />
 
             <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
@@ -73,13 +67,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="onRadioButtonClicked"
-                    android:text="HComECC" />
+                    android:text="comenc" />
+
                 <RadioButton
                     android:id="@+id/radio_ourmethod"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="onRadioButtonClicked"
-                    android:text="Our Method" />
+                    android:text="HEliOS" />
             </RadioGroup>
 
             <Button
@@ -99,6 +94,16 @@
                 android:layout_marginTop="25dp"
                 android:onClick="down"
                 android:text="download" />
+
+            <Button
+                android:id="@+id/results"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="25dp"
+                android:onClick="getResults"
+                android:text="summary" />
+
         </LinearLayout>
 
     </ScrollView>

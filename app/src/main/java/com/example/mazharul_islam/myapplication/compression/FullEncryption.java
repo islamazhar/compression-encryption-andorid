@@ -6,42 +6,23 @@ import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 
 public class FullEncryption {
-    public static ECC ecc = null;
-    public static String filename = null;
-    public  static BufferedOutputStream fos1 = null;
-    byte[] cipherText = null;
-    public FullEncryption(String _filename){
-        filename = _filename;
+    public static String plainFile = null;
+    public static String cipherFile = null;
+    public  static  ECC ecc = null;
+    public FullEncryption(String _plainFile, String _cipherFile){
+        plainFile = _plainFile;
+        cipherFile = _cipherFile;
         ecc = new ECC();
     }
     public double encrypt(){
-            double t = 0;
-            BinaryStdIn.takeInputFile(filename);
-            String s = BinaryStdIn.readString();
-
-            t = System.currentTimeMillis();
-            cipherText = ecc.encryption(s.getBytes());
-            System.err.println(new String(cipherText));
-            t = System.currentTimeMillis() - t;
-            // save the encrypted file
-            BinaryStdOut.takeInputFile(filename+".encrypted");
-            for(int i=0;i<cipherText.length;i++){
-                BinaryStdOut.write(cipherText[i]);
-            }
-            //BinaryStdOut.write(new String(cipherText));
-            BinaryStdOut.close();
-            return t;
-
+        double t = 0;
+        t = ecc.encryption(plainFile,cipherFile);
+        return t;
     }
 
     public double decrypt(){
-
         double t = 0;
-       // BinaryStdIn.takeInputFile(filename+".encrypted");
-       // String  s = BinaryStdIn.readString();
-        t = System.currentTimeMillis();
-        ecc.decryption(cipherText);
-        t = System.currentTimeMillis()-t;
+        t = ecc.decryption(cipherFile,plainFile);
         return t;
     }
 }

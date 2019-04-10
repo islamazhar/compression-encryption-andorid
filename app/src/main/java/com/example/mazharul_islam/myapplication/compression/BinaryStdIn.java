@@ -2,7 +2,7 @@
  *  Compilation:  javac BinaryStdIn.java
  *  Execution:    java BinaryStdIn < input > output
  *  Dependencies: none             
- *  
+ *
  *  Supports reading binary data from standard input.
  *
  *  % java BinaryStdIn < input.jpg > output.jpg
@@ -14,9 +14,11 @@
 package com.example.mazharul_islam.myapplication.compression;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /**
@@ -48,25 +50,26 @@ public final class BinaryStdIn {
     public static String filename = null;
     // don't instantiate
     private BinaryStdIn() { }
-
+    public static final int DEAFULT_BUFFER_SIZE = 8192;
+    public static final int MAX_BUFFER_SIZE = Integer.MAX_VALUE;
     // fill buffer
     public static void takeInputFile(String filename) {
-    		BinaryStdIn.filename = filename;
-    		BinaryStdIn.initialize();
+        BinaryStdIn.filename = filename;
+        BinaryStdIn.initialize();
     }
     private static void initialize() {
-    		try {
-    			if(filename == null)  in = new BufferedInputStream(System.in);
-    			else in = new BufferedInputStream(new FileInputStream(filename));
-        		buffer = 0;
-        		n = 0;
-        		fillBuffer();
-        		isInitialized = true;
-    		}catch(Exception e) {
-    			
-    		}
+        try {
+            if(filename == null)  in = new BufferedInputStream(System.in);
+            else in = new BufferedInputStream(new FileInputStream(filename));
+            buffer = 0;
+            n = 0;
+            fillBuffer();
+            isInitialized = true;
+        }catch(Exception e) {
+
+        }
     }
-    
+
     private static void fillBuffer() {
         try {
             buffer = in.read();
@@ -79,7 +82,7 @@ public final class BinaryStdIn {
         }
     }
 
-   /**
+    /**
      * Close this input stream and release any associated system resources.
      */
     public static void close() {
@@ -93,7 +96,7 @@ public final class BinaryStdIn {
         }
     }
 
-   /**
+    /**
      * Returns true if standard input is empty.
      * @return true if and only if standard input is empty
      */
@@ -102,7 +105,7 @@ public final class BinaryStdIn {
         return buffer == EOF;
     }
 
-   /**
+    /**
      * Reads the next bit of data from standard input and return as a boolean.
      *
      * @return the next bit of data from standard input as a {@code boolean}
@@ -116,7 +119,8 @@ public final class BinaryStdIn {
         return bit;
     }
 
-   /**
+
+    /**
      * Reads the next 8 bits from standard input and return as an 8-bit char.
      * Note that {@code char} is a 16-bit type;
      * to read the next 16 bits as a char, use {@code readChar(16)}.
@@ -147,7 +151,7 @@ public final class BinaryStdIn {
         // because buffer will be -1, so there is a special case for aligned byte
     }
 
-   /**
+    /**
      * Reads the next r bits from standard input and return as an r-bit character.
      *
      * @param  r number of bits to read.
@@ -170,7 +174,7 @@ public final class BinaryStdIn {
         return x;
     }
 
-   /**
+    /**
      * Reads the remaining bytes of data from standard input and return as a string. 
      *
      * @return the remaining bytes of data from standard input as a {@code String}
@@ -189,7 +193,7 @@ public final class BinaryStdIn {
     }
 
 
-   /**
+    /**
      * Reads the next 16 bits from standard input and return as a 16-bit short.
      *
      * @return the next 16 bits of data from standard input as a {@code short}
@@ -205,7 +209,7 @@ public final class BinaryStdIn {
         return x;
     }
 
-   /**
+    /**
      * Reads the next 32 bits from standard input and return as a 32-bit int.
      *
      * @return the next 32 bits of data from standard input as a {@code int}
@@ -221,7 +225,7 @@ public final class BinaryStdIn {
         return x;
     }
 
-   /**
+    /**
      * Reads the next r bits from standard input and return as an r-bit int.
      *
      * @param  r number of bits to read.
@@ -244,7 +248,7 @@ public final class BinaryStdIn {
         return x;
     }
 
-   /**
+    /**
      * Reads the next 64 bits from standard input and return as a 64-bit long.
      *
      * @return the next 64 bits of data from standard input as a {@code long}
@@ -261,7 +265,8 @@ public final class BinaryStdIn {
     }
 
 
-   /**
+
+    /**
      * Reads the next 64 bits from standard input and return as a 64-bit double.
      *
      * @return the next 64 bits of data from standard input as a {@code double}
@@ -271,7 +276,7 @@ public final class BinaryStdIn {
         return Double.longBitsToDouble(readLong());
     }
 
-   /**
+    /**
      * Reads the next 32 bits from standard input and return as a 32-bit float.
      *
      * @return the next 32 bits of data from standard input as a {@code float}
@@ -282,7 +287,7 @@ public final class BinaryStdIn {
     }
 
 
-   /**
+    /**
      * Reads the next 8 bits from standard input and return as an 8-bit byte.
      *
      * @return the next 8 bits of data from standard input as a {@code byte}
@@ -292,8 +297,8 @@ public final class BinaryStdIn {
         char c = readChar();
         return (byte) (c & 0xff);
     }
-    
-   /**
+
+    /**
      * Test client. Reads in a binary input file from standard input and writes
      * it to standard output.
      *
@@ -307,6 +312,36 @@ public final class BinaryStdIn {
             BinaryStdOut.write(c);
         }
         BinaryStdOut.flush();
+    }
+    /*
+    public static byte [] readAllBytes() throws  IOException {
+        byte [] buf = new byte[DEAFULT_BUFFER_SIZE];
+        int capacity = buf.length;
+        int nread = 0;
+        int n;
+        for(;;) {
+            while(( n = in.read(buf, nread, capacity-nread)) >0 )
+                nread +=n;
+            if(n < 0)
+                break;
+            if(capacity <= MAX_BUFFER_SIZE - capacity) {
+                capacity = capacity << 1;
+            } else {
+                if ( capacity == MAX_BUFFER_SIZE) throw  new OutOfMemoryError("Required array size too large");
+                capacity = MAX_BUFFER_SIZE;
+            }
+            buf = Arrays.copyOf(buf, capacity);
+        }
+        return (capacity == nread) ? buf : Arrays.copyOf(buf, nread);
+    }
+    */
+    public static byte [] readAllBytes() throws  IOException {
+        int size = (int) new File(filename).length();
+        byte [] buf = new byte[size];
+        for(int i=0;i<buf.length;i++){
+            buf[i] = BinaryStdIn.readByte();
+        }
+        return buf;
     }
 }
 

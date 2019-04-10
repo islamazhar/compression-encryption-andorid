@@ -83,10 +83,10 @@ public class Huffman {
 	 * using Huffman codes with an 8-bit alphabet; and writes the results
 	 * to standard output.
 	 */
-	public static long compress(String filename) {
+	public static long compress() {
+		long t1 = System.currentTimeMillis();
 		// read the input
 		String s = BinaryStdIn.readString();
-		BinaryStdIn.close();
 		char[] input = s.toCharArray();
 
 		// tabulate frequency counts
@@ -102,26 +102,13 @@ public class Huffman {
 		buildCode(st, root, "");
 
 		// print trie for decoder
-		
-		
-		writeTrie(root); // interesting place apply encryption on the root and then write.
-		
-		
-		BinaryStdOut.close();
-		
-		
-		
-		
-		
-		BinaryStdOut.takeInputFile(filename);
+		writeTrie(root);
+
 		// print number of bytes in original uncompressed message
 		BinaryStdOut.write(input.length);
-		long ss = System.currentTimeMillis();
+
 		// use Huffman code to encode input
 		for (int i = 0; i < input.length; i++) {
-			// changes should be here
-			
-			
 			String code = st[input[i]];
 			for (int j = 0; j < code.length(); j++) {
 				if (code.charAt(j) == '0') {
@@ -133,11 +120,9 @@ public class Huffman {
 				else throw new IllegalStateException("Illegal state");
 			}
 		}
-		long e = System.currentTimeMillis();
-		
+		long t2 = System.currentTimeMillis();
 		// close output stream
-		BinaryStdOut.close();
-		return e-ss;
+		return t2-t1;
 	}
 
 	// build the Huffman trie given frequencies
@@ -193,19 +178,17 @@ public class Huffman {
 	 * Reads a sequence of bits that represents a Huffman-compressed message from
 	 * standard input; expands them; and writes the results to standard output.
 	 */
-	public static long expand(String filename) {
+	public static long expand() {
 
 		// read in Huffman trie from input stream
-		Node root = readTrie(); 
-		BinaryStdIn.close();
-		BinaryStdIn.takeInputFile(filename);
-
+		long s = System.currentTimeMillis();
+		Node root = readTrie();
 		// number of bytes to write
 		int length = BinaryStdIn.readInt();
 
 		
 		// decode using the Huffman trie
-		long s = System.currentTimeMillis();
+
 		for (int i = 0; i < length; i++) {
 			Node x = root;
 			while (!x.isLeaf()) {
@@ -216,7 +199,6 @@ public class Huffman {
 			BinaryStdOut.write(x.ch, 8);
 		}
 		long e = System.currentTimeMillis();
-		BinaryStdOut.close();
 		return e-s;
 	}
 
@@ -232,37 +214,28 @@ public class Huffman {
 	}
 
 
-	public double compress(String inputFileNamme, String compressed ) {
-		String tree = compressed+".tree";
+	public double compress(String inputFileNamme, String compressed, String encryptedCompressed ) {
+
 		BinaryStdIn.takeInputFile(inputFileNamme);
-		BinaryStdOut.takeInputFile(tree);
+		BinaryStdOut.takeInputFile(compressed);
 		double t = 0;
-		t += Huffman.compress(compressed);
-        BinaryStdIn.close();
-		BinaryStdIn.takeInputFile(tree);
-		//BinaryStdIn.takeInputFile(compressed);
-		byte[] plainText = BinaryStdIn.readString().getBytes();
-        BinaryStdIn.close();
-		System.err.println(plainText);
-		long cur = System.currentTimeMillis();
-		cipherText = ecc.encryption(plainText);
-		t += (System.currentTimeMillis()-cur);
+		t += Huffman.compress();
 		BinaryStdIn.close();
-		
+		BinaryStdOut.close();
+		t += ecc.encryption(compressed,encryptedCompressed);
 		return t;
 	}
-	public double deCompress(String compressed, String outputFile ) {
-		String tree = compressed+".tree";
-		BinaryStdIn.takeInputFile(tree);
-		BinaryStdOut.takeInputFile(outputFile);
+	public double deCompress(String encryptedCompressed, String decryptedCompressed, String outputFile ) {
 		double t = 0;
-		
-		t += Huffman.expand(compressed);
-		long cur = System.currentTimeMillis();
-		ecc.decryption(cipherText);
-		t += (System.currentTimeMillis()-cur);
+		t+=ecc.decryption(encryptedCompressed,decryptedCompressed);
+		BinaryStdIn.takeInputFile(decryptedCompressed);
+		BinaryStdOut.takeInputFile(outputFile);
+		t += Huffman.expand();
+        BinaryStdIn.close();
+		BinaryStdOut.close();
 		return t;
 	}
+
 	public static void main(String[] args) throws IOException {
 		
 	}
