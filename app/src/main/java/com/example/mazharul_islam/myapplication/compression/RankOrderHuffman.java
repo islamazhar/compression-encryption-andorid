@@ -193,7 +193,7 @@ public class RankOrderHuffman {
 	}
 
 	// make a lookup table from symbols and their encodings
-	private static void buildCode(String[] st, Node x, String s) {
+	private static void buildCode (String[] st, Node x, String s) {
 		if (!x.isLeaf()) {
 			buildCode(st, x.left,  s + '0');
 			buildCode(st, x.right, s + '1');
@@ -242,7 +242,7 @@ public class RankOrderHuffman {
 				else     x = x.left;
 			}
 			String code = st[x.ch];
-			Integer len = code.length();
+			//Integer len = code.length();
 			Integer c = Map2.get(code);
 			Element e = ht1.select(c);
 			BinaryStdOut.write(e.value, 8);
@@ -268,7 +268,7 @@ public class RankOrderHuffman {
 		}
 	}
 
-		public double compress(String inputFileNamme, String compressed ) {
+		public double compress(String inputFileNamme, String compressed) {
 			String tree = compressed+".tree";
 			BinaryStdIn.takeInputFile(inputFileNamme);
 			BinaryStdOut.takeInputFile(tree);
@@ -279,15 +279,16 @@ public class RankOrderHuffman {
 			t += (System.currentTimeMillis()-cur);
 			return t;
 		}
-		public double deCompress(String compressed, String outputFile ) {
-            double t = 0;
-		    t += ecc.decryption(compressed+".tree.encrypted",compressed+".tree");
-			BinaryStdIn.takeInputFile(compressed+".tree");
+		public double deCompress (String compressed, String outputFile) {
+			double t = 0;
+			String tree = compressed+".tree";
+			BinaryStdIn.takeInputFile(tree);
 			BinaryStdOut.takeInputFile(outputFile);
 			t += expand(compressed);
-
-
+		    t += ecc.decryption(compressed+".tree.encrypted",compressed+".tree");
 			return t;
 		}
-
+		public static  void main(String[] args){
+	            System.out.println("Hello world");
+        }
 	}

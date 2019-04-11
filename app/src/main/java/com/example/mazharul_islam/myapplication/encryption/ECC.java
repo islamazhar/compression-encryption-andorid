@@ -9,49 +9,37 @@ package com.example.mazharul_islam.myapplication.encryption;
 import com.example.mazharul_islam.myapplication.compression.BinaryStdIn;
 import com.example.mazharul_islam.myapplication.compression.BinaryStdOut;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.ArrayList;
+import org.spongycastle.jce.ECNamedCurveTable;
+import  org.spongycastle.jce.spec.ECParameterSpec;
+
+
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.security.*;
-import java.security.spec.*;
+
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyAgreement;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+
 
 public class ECC {
 
 	/**
 	 * @param args
 	 */
-	//static KeyGenerator keygen = null;
-	//static SecretKey key = null;
 	 Cipher  cipher = null;
-	 byte[] key = null;
-	public static int BLOCK_SIZE = 1024;
-	 SecretKeySpec skeySpec = null;
-	//public List encryptedtSymbolsList = null;
+	 public static final int BLOCK_SIZE = 256;
+	 PrivateKey privKey = null;
+	 PublicKey pubKey = null;
 	public ECC() {
 		// constructor
 		try {
-			byte[] keyStart = "this is a key".getBytes();
-			KeyGenerator kgen = KeyGenerator.getInstance("AES");
-			SecureRandom sr = SecureRandom.getInstance("SHA1PRNG");
-			sr.setSeed(keyStart);
-			kgen.init(192, sr); // 192 and 256 bits may not be available
-			SecretKey skey = kgen.generateKey();
-			key = skey.getEncoded();
-			skeySpec = new SecretKeySpec(key, "AES");
-			cipher = Cipher.getInstance("AES");
+			Security.addProvider(new org.spongycastle.jce.provider.BouncyCastleProvider());
+			ECParameterSpec ecSpec = ECNamedCurveTable.getParameterSpec("secp256k1");
+			KeyPairGenerator kpg = KeyPairGenerator.getInstance("ECDSA","SC");
+			kpg.initialize(ecSpec, new SecureRandom());
+			KeyPair kpU = kpg.generateKeyPair();
+			this.privKey = kpU.getPrivate();
+			this.pubKey = kpU.getPublic();
+			cipher = Cipher.getInstance("ECIES","SC");
 		}catch (Exception ex){
 			System.err.println("While calling ECC constructor");
 			ex.printStackTrace();
@@ -67,7 +55,7 @@ public class ECC {
 		//System.out.println(plainText.length);
 		try {
 			//System.out.println(plainText.length);
-			cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+			cipher.init(Cipher.ENCRYPT_MODE, this.pubKey, new SecureRandom());
             byte [] plainText = BinaryStdIn.readAllBytes();
 			for(int i=0;i<plainText.length;i+=BLOCK_SIZE) {
 				int s = i;
@@ -76,7 +64,7 @@ public class ECC {
 				byte[] tempPlainText = Arrays.copyOfRange(plainText, s, e);
 				//System.out.println(new String(tempPlainText));
 				ECC ecc = new ECC();
-				byte[] tempCipherText = ecc.doEncryption(cipher,tempPlainText);
+				byte[] tempCipherText = doEncryption(cipher,tempPlainText);
 				BinaryStdOut.write(tempCipherText.length);
 				//System.out.println(tempCipherText.length);
 				//System.out.println("Writing");
@@ -122,14 +110,14 @@ public class ECC {
         BinaryStdOut.takeInputFile(decryptedFileName);
         int length = 0;
         try {
-            cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+            cipher.init(Cipher.DECRYPT_MODE, privKey, new SecureRandom());
             while((length = BinaryStdIn.readInt())!=-1){
                 byte [] cipherText = new byte[length];
                 for(int i=0;i<cipherText.length;i++) {
                     cipherText[i]  = BinaryStdIn.readByte();
                 }
                 ECC ecc = new ECC();
-                byte[] tempPlainText = ecc.doDecryption(cipher,cipherText);
+                byte[] tempPlainText = doDecryption(cipher,cipherText);
                 for(int i=0;i<tempPlainText.length;i++){
                     BinaryStdOut.write(tempPlainText[i]);
                 }
@@ -147,7 +135,8 @@ public class ECC {
 
 
 
-	public static void main(String[] args) throws Exception {
-	}
+//	public static void main(String[] args) throws Exception {
+//		ECC ecc = new ECC();
+//	}
 
 }
