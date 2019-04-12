@@ -25,7 +25,7 @@
     import java.io.FileOutputStream;
     import java.io.PrintStream;
 
-    
+
 
     public class MainActivity extends AppCompatActivity {
         public EditText serverIP, username, password, fileSize, dest;
