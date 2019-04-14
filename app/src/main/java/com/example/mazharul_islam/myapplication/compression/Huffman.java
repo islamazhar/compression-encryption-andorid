@@ -220,9 +220,12 @@ public class Huffman {
 		BinaryStdOut.takeInputFile(compressed);
 		double t = 0;
 		t += Huffman.compress();
+		System.err.println("Compression = "+t);
 		BinaryStdIn.close();
 		BinaryStdOut.close();
-		t += ecc.encryption(compressed,encryptedCompressed);
+		double tt = ecc.encryption(compressed,encryptedCompressed);
+		System.err.println("Encryption = "+tt);
+		t += tt;
 		return t;
 	}
 	public double deCompress(String encryptedCompressed, String decryptedCompressed, String outputFile ) {
@@ -230,9 +233,10 @@ public class Huffman {
 		t+=ecc.decryption(encryptedCompressed,decryptedCompressed);
 		BinaryStdIn.takeInputFile(decryptedCompressed);
 		BinaryStdOut.takeInputFile(outputFile);
-		t += Huffman.expand();
+		double tt = Huffman.expand();
         BinaryStdIn.close();
 		BinaryStdOut.close();
+		t +=tt;
 		return t;
 	}
 

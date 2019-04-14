@@ -223,6 +223,8 @@ public class RankOrderHuffman {
 	 */
 	public static long expand(String filename) {
 
+
+		long s = System.currentTimeMillis();
 		// read in Huffman trie from input stream
 		Node root = readTrie();
 		BinaryStdIn.close();
@@ -233,7 +235,6 @@ public class RankOrderHuffman {
 
 
 		// decode using the Huffman trie
-		long s = System.currentTimeMillis();
 		for (int i = 0; i < length; i++) {
 			Node x = root;
 			while (!x.isLeaf()) {
@@ -274,9 +275,10 @@ public class RankOrderHuffman {
 			BinaryStdOut.takeInputFile(tree);
 			double t = 0;
 			t += compress(compressed);
-			long cur = System.currentTimeMillis();
-			ecc.encryption(tree,tree+".encrypted");
-			t += (System.currentTimeMillis()-cur);
+			System.err.println("Compression = "+t);
+			double tt = ecc.encryption(tree,tree+".encrypted");
+			System.err.println("Encryption = "+tt);
+			//t += tt;
 			return t;
 		}
 		public double deCompress (String compressed, String outputFile) {
@@ -285,10 +287,11 @@ public class RankOrderHuffman {
 			BinaryStdIn.takeInputFile(tree);
 			BinaryStdOut.takeInputFile(outputFile);
 			t += expand(compressed);
-		    t += ecc.decryption(compressed+".tree.encrypted",compressed+".tree");
-			return t;
+		    double tt = ecc.decryption(compressed+".tree.encrypted",compressed+".tree");
+			//t += tt;
+		    return t;
 		}
 		public static  void main(String[] args){
-	            System.out.println("Hello world");
+
         }
 	}
