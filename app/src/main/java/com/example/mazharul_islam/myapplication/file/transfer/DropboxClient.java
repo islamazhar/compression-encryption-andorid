@@ -18,12 +18,15 @@ public class DropboxClient {
     }
     public long HTTPUP(String source, String des) {
         try {
+            long time1 = System.currentTimeMillis();
             InputStream in = new FileInputStream(source);
             FileMetadata metadata = client.files().uploadBuilder(des)
                     .uploadAndFinish(in);
             // Now delete the file
             in.close();
+            long time2 = System.currentTimeMillis();
             client.files().deleteV2(des);
+            return time2 - time1;
         } catch ( Exception ex){
            ex.printStackTrace();
         }
@@ -37,11 +40,15 @@ public class DropboxClient {
                     .uploadAndFinish(in);
             in.close();
             //  downaload the file
+            long time1 = System.currentTimeMillis();
             OutputStream os = new FileOutputStream(source);
+
             metadata = client.files().downloadBuilder(des).download(os);
             os.close();
+            long time2 = System.currentTimeMillis();
              // delete the file
             client.files().deleteV2(des);
+            return time2 - time1;
         } catch (Exception ex) {
             ex.printStackTrace();
         }

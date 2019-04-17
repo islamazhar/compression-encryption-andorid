@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public static boolean hcomecc = true;
     public static boolean ftps = false;
     public static boolean ranked = false;
-    public static final int times = 1;
+    public static final int times = 25;
     public static String sadResults = null;
    // public static String sadResultLocation  = "/home/mazharul-islam/Lab/summary.mobie.txt";
     public  static PrintStream sadPs = null;
@@ -83,16 +83,17 @@ public class MainActivity extends AppCompatActivity {
                 String enCompressedFile = source+".huffman.encrypted";
                 String decryptedCompressedFile = compressedFile+".again";
                 String outFile = source+".again.txt";
+                String destination1 = destination+String.valueOf(i);
                 double t = 0;
                 double compressedTime = huffman.compress(source,compressedFile,enCompressedFile);
                 double decompressedTime = huffman.deCompress(enCompressedFile, decryptedCompressedFile,outFile);
 
                 if (upload) {
                     t += compressedTime;
-                    new PCUP (size, t, getApplicationContext()).execute(address, u, p, enCompressedFile, destination);
+                    new PCUP (size, t, getApplicationContext()).execute(address, u, p, enCompressedFile, destination1);
                 } else {
                     t += decompressedTime;
-                    new PCDN (size, t, getApplicationContext()).execute(address, u, p, enCompressedFile, destination);
+                    new PCDN (size, t, getApplicationContext()).execute(address, u, p, enCompressedFile, destination1);
                 }
 
                 //Toast.makeText(getApplicationContext(), ("Compressed and decompressed in = " + t + " s"), Toast.LENGTH_LONG).show();
@@ -114,12 +115,13 @@ public class MainActivity extends AppCompatActivity {
                 double t = 0 ;
                 double compressedTime = helios.compress(source, compressedFile);
                 double decompressedTime = helios.deCompress(compressedFile, outFile);
+                String destination1 = destination+String.valueOf(i);
                 if (upload) {
                     t += compressedTime;
-                    new PCUP(size, t, getApplicationContext()).execute(address, u, p, compressedFile, destination);
+                    new PCUP(size, t, getApplicationContext()).execute(address, u, p, compressedFile, destination1);
                 } else {
                     t += decompressedTime;
-                    new PCDN(size, t, getApplicationContext()).execute(address, u, p, compressedFile, destination);
+                    new PCDN(size, t, getApplicationContext()).execute(address, u, p, compressedFile, destination1);
                 }
                 //Toast.makeText(getApplicationContext(), ("Compressed and decompressed in = " + t + " s"), Toast.LENGTH_LONG).show();
             }
@@ -131,13 +133,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void fullEncrytption  (String address, String u, String p, String size, boolean upload) {
         String source = getApplicationContext().getFilesDir()+"/"+size+".sh";
-        String destination = "/upload/"+size+".sh.server";
+
 
         // full encryption
         try{
-            String encryptedFile = source+".en";
-            FullEncryption fullEncryption = new FullEncryption(source,encryptedFile);
+
+
+
             for(int i=0;i<times;i++) {
+                String destination = "/upload/"+size+".sh.server"+String.valueOf(i);
+                String encryptedFile = source+".en"+String.valueOf(i);
+                FullEncryption fullEncryption = new FullEncryption(source,encryptedFile);
                 double t = 0;
                 double encryptionTime = fullEncryption.encrypt();
                 double decryptionTime = fullEncryption.decrypt();
