@@ -14,12 +14,7 @@ public class RankOrderHuffman {
 
 	// alphabet size of extended ASCII
 	private static final int R = 256;
-	String filename = null;
 	static String[] st = null;
-	static Integer length = 0;
-	//static Integer maxLevel= 25;
-	static byte[] plainText = null;
-	//static byte[] cipherText = null;
 	static RedBlackBST<Element> ht = null;
 	static RedBlackBST<Element> ht1 = null;
 	static Map<Integer,String> Map1= null;
@@ -81,37 +76,22 @@ public class RankOrderHuffman {
 		// build code table
 		st = new String[R];
 		buildCode(st, root, "");
-			/*
-			try {
-				ht1 = (RedBlackBST) ht.clone();
-				System.out.println(ht1.toString());
-			}catch ( CloneNotSupportedException ex){
-				ex.printStackTrace();
-			}
-			*/
-		// print trie for decoder
-
-		plainText = new byte[length+1];
-		length = 0;
 		writeTrie(root); // interesting place apply encryption on the root and then write.
 
 		BinaryStdOut.close();
 		BinaryStdOut.takeInputFile(filename);
 		// print number of bytes in original uncompressed message
-
 		BinaryStdOut.write(input.length);
 
+		for (int i = 0; i < R; i++) {
+			if( freq[i] != 0) {
+                Element e = new Element(0,(char)i, st[i].length());
+                int rank = ht.rank(e);
+                Map1.put(rank, st[i]);
+                Map2.put(st[i], rank);
+                freq[input[i]]= 0;
+            }
 
-			/*
-			for(int i=0;i<plainText.length;i++) {
-				System.out.print(plainText[i]);
-			}
-			System.out.println("");
-			*/
-
-
-		for (int i = 0; i < input.length; i++) {
-			freq[input[i]]= 0;
 		}
 		long ss = System.currentTimeMillis();
 
@@ -144,7 +124,6 @@ public class RankOrderHuffman {
 			freq[input[i]]++;
 			ht.put(e);
 		}
-		//	cipherText = ecc.encryption(plainText);
 		long e = System.currentTimeMillis();
 
 		// close output stream
@@ -182,11 +161,9 @@ public class RankOrderHuffman {
 	private static void writeTrie(Node x) {
 		if (x.isLeaf()) {
 			BinaryStdOut.write(true);
-			plainText[length++] = 1;
 			BinaryStdOut.write(x.ch, 8);
 			return;
 		}
-		plainText[length++] = 0;
 		BinaryStdOut.write(false);
 		writeTrie(x.left);
 		writeTrie(x.right);
@@ -209,10 +186,6 @@ public class RankOrderHuffman {
 			Element e  = new Element(0,x.ch,len);
 			ht.put(e);
 			ht1.put(new Element(0,x.ch,len)); // for decoding
-			Integer siz = ht.size();
-			Map2.put(s, siz-1);
-			length +=len;
-			Map1.put(siz-1,s);
 			//////////////////////////////
 		}
 	}
